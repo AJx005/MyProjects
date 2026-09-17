@@ -4,7 +4,7 @@ A business analytics and machine learning project that uses customer behaviour a
 
 ## Project Goal
 
-RetailX needed a more useful way to turn customer data into targeted marketing decisions. The project combines **unsupervised learning** and **supervised learning**:
+In the **RetailX university coursework scenario**, the goal was to turn customer data into more useful targeted marketing decisions. The project combines **unsupervised learning** and **supervised learning**:
 
 1. **K-Means clustering** discovers natural customer groups.
 2. **Segment profiling** explains how those groups differ in purchasing and engagement behaviour.
