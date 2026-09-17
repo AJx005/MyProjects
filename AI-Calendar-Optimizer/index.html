@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Calendar Scheduler — Optimize Your Day</title>
+  <meta name="description"
+    content="An AI-powered daily calendar scheduler that intelligently optimizes your tasks based on priority, duration, and energy levels." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- Background orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  <div class="app-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-badge">
+        <span class="ai-icon">✦</span>
+        AI-Powered
+      </div>
+      <h1>Smart Calendar Scheduler</h1>
+      <p class="header-sub">Let AI arrange your tasks into the perfect daily flow — automatically.</p>
+    </header>
+
+    <main class="main-grid">
+
+      <!-- Left Panel: Task Input -->
+      <section class="panel input-panel" aria-label="Add Task">
+        <div class="panel-header">
+          <div class="panel-icon">📋</div>
+          <div>
+            <h2>Add Tasks</h2>
+            <p class="panel-desc">Fill in your tasks and hit optimize</p>
+          </div>
+        </div>
+
+        <form id="task-form" class="task-form" aria-label="Task entry form">
+          <div class="form-group">
+            <label for="task-name">Task Name</label>
+            <input type="text" id="task-name" placeholder="e.g. Deep work session" autocomplete="off" required />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="task-duration">Duration (mins)</label>
+              <input type="number" id="task-duration" placeholder="60" min="5" max="480" required />
+            </div>
+            <div class="form-group">
+              <label for="task-priority">Priority</label>
+              <select id="task-priority" required>
+                <option value="" disabled selected>Select</option>
+                <option value="high">🔴 High</option>
+                <option value="medium">🟡 Medium</option>
+                <option value="low">🟢 Low</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="task-category">Category</label>
+            <select id="task-category">
+              <option value="work">💼 Work</option>
+              <option value="health">💪 Health &amp; Fitness</option>
+              <option value="learning">📚 Learning</option>
+              <option value="personal">🏠 Personal</option>
+              <option value="break">☕ Break</option>
+            </select>
+          </div>
+
+          <button type="submit" id="add-task-btn" class="btn btn-secondary">
+            <span>+ Add Task</span>
+          </button>
+        </form>
+
+        <!-- Task List -->
+        <div class="task-list-section">
+          <h3 class="task-list-title">
+            Queued Tasks
+            <span id="task-count" class="task-badge">0</span>
+          </h3>
+          <ul id="task-list" class="task-list" aria-label="Queued tasks" aria-live="polite">
+            <li class="empty-state" id="empty-state">
+              <span class="empty-icon">🗒️</span>
+              <span>No tasks yet. Add some above!</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Optimize Button -->
+        <button id="optimize-btn" class="btn btn-primary" disabled aria-label="Optimize Schedule">
+          <span class="btn-icon">✦</span>
+          <span>Optimize Schedule</span>
+          <div class="btn-shimmer"></div>
+        </button>
+      </section>
+
+      <!-- Right Panel: Schedule Output -->
+      <section class="panel schedule-panel" aria-label="Optimized Schedule">
+        <div class="panel-header">
+          <div class="panel-icon">🗓️</div>
+          <div>
+            <h2>Your Optimized Day</h2>
+            <p class="panel-desc" id="schedule-date"></p>
+          </div>
+        </div>
+
+        <!-- AI Insight Banner -->
+        <div class="ai-banner" id="ai-banner" style="display:none;">
+          <div class="ai-banner-icon">✦</div>
+          <div class="ai-banner-text">
+            <strong>AI Optimization Applied</strong>
+            <span id="ai-summary-text"></span>
+          </div>
+        </div>
+
+        <!-- Calendar Timeline -->
+        <div class="timeline-container" id="timeline-container">
+          <div class="placeholder-state" id="schedule-placeholder">
+            <div class="placeholder-art">
+              <div class="placeholder-circle"></div>
+              <div class="placeholder-lines">
+                <div class="ph-line long"></div>
+                <div class="ph-line medium"></div>
+                <div class="ph-line short"></div>
+              </div>
+            </div>
+            <p>Add tasks and click <strong>Optimize Schedule</strong> to see your AI-arranged day.</p>
+          </div>
+          <div id="schedule-output" class="schedule-output" style="display:none;"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- AI Explanation Section -->
+    <section class="ai-explainer" aria-label="How AI helps">
+      <div class="explainer-header">
+        <h2><span class="ai-icon">✦</span> How AI Optimizes Your Schedule</h2>
+        <p>Our intelligent scheduling engine applies proven productivity science automatically.</p>
+      </div>
+      <div class="explainer-cards">
+        <div class="explainer-card">
+          <div class="card-icon">🧠</div>
+          <h3>Cognitive Load Matching</h3>
+          <p>High-priority, complex tasks are scheduled during peak morning energy hours when focus is sharpest.</p>
+        </div>
+        <div class="explainer-card">
+          <div class="card-icon">⚡</div>
+          <h3>Energy-Aware Sequencing</h3>
+          <p>Tasks are ordered to follow your natural energy curve — demanding work first, lighter tasks later.</p>
+        </div>
+        <div class="explainer-card">
+          <div class="card-icon">🔄</div>
+          <h3>Smart Break Insertion</h3>
+          <p>The AI automatically inserts recovery breaks to prevent burnout and sustain long-term productivity.</p>
+        </div>
+        <div class="explainer-card">
+          <div class="card-icon">🎯</div>
+          <h3>Priority Optimization</h3>
+          <p>Critical tasks are never left to chance. The AI guarantees high-priority work gets your best hours.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>AI Calendar Scheduler &mdash; Powered by intelligent scheduling algorithms</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
