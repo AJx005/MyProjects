@@ -9,7 +9,15 @@ RetailX needed a more useful way to turn customer data into targeted marketing d
 1. **K-Means clustering** discovers natural customer groups.
 2. **Segment profiling** explains how those groups differ in purchasing and engagement behaviour.
 3. A **Decision Tree classifier** predicts the cluster of new customers.
-4. The analytical findings are translated into **marketing recommendations** for each segment.
+4. The findings are translated into **marketing recommendations** for each segment.
+
+## What This Project Demonstrates
+
+- Preparing and standardising customer data for clustering
+- Applying the **Elbow Method** and **K-Means** segmentation
+- Interpreting clusters from a business perspective
+- Training and evaluating an interpretable **Decision Tree** model
+- Turning analytical findings into practical marketing actions
 
 ## Tech Stack
 
@@ -24,7 +32,7 @@ RetailX needed a more useful way to turn customer data into targeted marketing d
 
 `Customer data → feature selection → StandardScaler → Elbow Method → K-Means (k=3) → segment profiling → Decision Tree → business recommendations`
 
-The final notebook uses 14 demographic and behavioural predictors after excluding the customer identifier, ZIP code and the original segment field.
+The cleaned portfolio notebook uses **14 demographic and behavioural predictors** after excluding the customer identifier, ZIP code and the original segment field.
 
 ## Customer Segments
 
@@ -36,19 +44,18 @@ The final notebook uses 14 demographic and behavioural predictors after excludin
 
 ## Predictive Model
 
-A `DecisionTreeClassifier(max_depth=5, random_state=42)` was trained using an 80/20 train-test split to predict the K-Means segment of a customer.
+A `DecisionTreeClassifier(max_depth=5, random_state=42)` was trained using an **80/20 train-test split** to predict the K-Means segment of a customer.
 
-**Test accuracy: 87.25%**
-
-Confusion matrix from the submitted notebook:
+**Test accuracy from the submitted notebook: 87.25%**
 
 ```text
+Confusion Matrix
 [[ 64   6  20]
  [  5  83   5]
  [  9   6 202]]
 ```
 
-The project report also highlights behavioural measures such as average order size, purchase frequency, tenure, cross-category buying, marketing exposure and channel usage as important signals for differentiating customer groups.
+The project report highlights behavioural measures such as average order size, purchase frequency, tenure, cross-category buying, marketing exposure and channel usage as useful signals for differentiating the customer groups.
 
 ## Business Recommendations
 
@@ -60,17 +67,17 @@ The project report also highlights behavioural measures such as average order si
 
 ## Limitations & Next Steps
 
-The project identified several ways the analysis could be extended:
+The original project report identified several ways the analysis could be extended:
 
-- Re-cluster periodically to capture customer behaviour changes.
+- Re-cluster periodically to capture changes in customer behaviour.
 - Benchmark the Decision Tree against Random Forest or XGBoost.
-- Validate the customer segments with real campaign/A-B testing.
+- Validate the customer segments with real campaign or A/B testing.
 - Add richer features such as RFM and customer lifetime value.
 - Monitor movement between customer segments over time.
 
 ## Run the Notebook
 
-The original project uses an Excel file named `RetailX.xlsx`. The dataset is not included in this public portfolio repository. To rerun the analysis, place an authorised copy of `RetailX.xlsx` in the notebook working directory and install the packages in `requirements.txt`.
+The original project uses an Excel file named `RetailX.xlsx`. The dataset is **not included in this public portfolio repository**. To rerun the analysis, place an authorised copy of `RetailX.xlsx` in the notebook working directory and install the packages in `requirements.txt`.
 
 Open: [`RetailX_Customer_Segmentation.ipynb`](./RetailX_Customer_Segmentation.ipynb)
 
