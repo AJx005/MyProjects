@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#171717" />
+  <title>Google Review NFC Card Demo</title>
+  <style>
+    :root {
+      --bg: #151515;
+      --panel: #202124;
+      --panel-2: #25262a;
+      --border: #44474d;
+      --text: #f1f3f4;
+      --muted: #aeb3ba;
+      --blue: #8ab4f8;
+      --blue-strong: #4f8df7;
+      --green: #34a853;
+      --yellow: #fbbc04;
+      --danger: #f28b82;
+      --shadow: 0 16px 42px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 50% -15%, rgba(138,180,248,.10), transparent 36%),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, textarea { font: inherit; }
+
+    button { -webkit-tap-highlight-color: transparent; }
+
+    .page {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: 22px 16px 42px;
+    }
+
+    .top-note {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: fit-content;
+      margin: 0 auto 18px;
+      padding: 8px 12px;
+      border: 1px solid #3d4045;
+      border-radius: 999px;
+      color: #c8ccd1;
+      background: rgba(32,33,36,.72);
+      font-size: 12px;
+      letter-spacing: .01em;
+    }
+
+    .top-note .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(52,168,83,.12);
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 4px 4px 24px;
+    }
+
+    .avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      background: linear-gradient(145deg, #1e88e5, #5e35b1);
+      color: white;
+      font-size: 25px;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .profile h1 {
+      margin: 0;
+      font-size: clamp(21px, 5vw, 28px);
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    .profile p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .review-panel {
+      background: rgba(32,33,36,.72);
+      border: 1px solid #303238;
+      border-radius: 24px;
+      padding: 22px 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .prompt {
+      text-align: center;
+      color: #d6d9dd;
+      font-size: 14px;
+      margin: 0 0 15px;
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: clamp(6px, 3vw, 14px);
+      margin: 0 auto 22px;
+    }
+
+    .star {
+      width: 52px;
+      height: 52px;
+      min-width: 44px;
+      min-height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: transparent;
+      color: #7e838b;
+      cursor: pointer;
+      font-size: 43px;
+      line-height: 1;
+      display: grid;
+      place-items: center;
+      transition: transform .14s ease, color .14s ease, background .14s ease;
+    }
+
+    .star:focus-visible {
+      outline: 3px solid rgba(138,180,248,.55);
+      outline-offset: 3px;
+    }
+
+    .star.active {
+      color: var(--yellow);
+      transform: translateY(-2px);
+    }
+
+    .star:hover { background: rgba(255,255,255,.04); }
+
+    .rating-label {
+      min-height: 20px;
+      margin: -11px 0 14px;
+      text-align: center;
+      color: var(--blue);
+      font-size: 13px;
+    }
+
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 150px;
+      resize: vertical;
+      border: 1.5px solid #74777d;
+      border-radius: 13px;
+      padding: 16px;
+      color: var(--text);
+      background: #1b1c1f;
+      outline: none;
+      font-size: 16px;
+      line-height: 1.45;
+      transition: border-color .15s ease, box-shadow .15s ease;
+    }
+
+    textarea::placeholder { color: #a9adb4; }
+
+    textarea:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(138,180,248,.12);
+    }
+
+    .actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      width: 100%;
+      min-height: 52px;
+      border-radius: 999px;
+      border: 1px solid #393c43;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 15px;
+      transition: transform .12s ease, opacity .12s ease, background .12s ease;
+    }
+
+    .btn:active { transform: scale(.99); }
+
+    .btn-secondary {
+      color: var(--blue);
+      background: #252934;
+    }
+
+    .btn-primary {
+      color: white;
+      border-color: transparent;
+      background: linear-gradient(90deg, #2f76f4, #5a93ff);
+    }
+
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: .38;
+      transform: none;
+    }
+
+    .demo-disclaimer {
+      margin: 12px 4px 0;
+      color: #8f949c;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .sales-card {
+      margin-top: 18px;
+      padding: 22px 18px;
+      border-radius: 24px;
+      border: 1px solid #383b40;
+      background: linear-gradient(145deg, #1d1f22, #191a1d);
+      box-shadow: var(--shadow);
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    .sales-card h2 {
+      margin: 7px 0 9px;
+      font-size: clamp(24px, 6vw, 32px);
+      line-height: 1.1;
+    }
+
+    .sales-card .lead {
+      margin: 0;
+      color: #c0c4ca;
+      line-height: 1.55;
+      font-size: 15px;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 19px 0 21px;
+    }
+
+    .benefit {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+      min-width: 0;
+      color: #e0e3e7;
+      font-size: 14px;
+    }
+
+    .check {
+      width: 23px;
+      height: 23px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: white;
+      background: var(--green);
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .product {
+      position: relative;
+      min-width: 0;
+      padding: 16px 12px;
+      border: 1px solid #44474d;
+      border-radius: 17px;
+      background: #202226;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+
+    .product.selected {
+      border-color: var(--blue);
+      background: #232b38;
+      transform: translateY(-2px);
+    }
+
+    .product .mini-card {
+      height: 76px;
+      margin-bottom: 13px;
+      border-radius: 11px;
+      border: 1px solid rgba(255,255,255,.13);
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 75% 15%, rgba(138,180,248,.2), transparent 35%),
+        linear-gradient(145deg, #0c355e, #111820);
+      color: #f3f6f9;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-align: center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+    }
+
+    .product small {
+      display: block;
+      color: #aeb3ba;
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .product strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .product .name {
+      display: block;
+      min-height: 38px;
+      color: #eceff2;
+      font-weight: 600;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .selection {
+      margin-top: 13px;
+      min-height: 22px;
+      color: #c6cad0;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .payment {
+      margin: 17px 0 0;
+      padding-top: 15px;
+      border-top: 1px solid #34373c;
+      color: #aeb3ba;
+      text-align: center;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .how {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 11px;
+      align-items: start;
+      padding: 13px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.025);
+      border: 1px solid #303238;
+    }
+
+    .step-num {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #28313e;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .step h3 {
+      margin: 1px 0 3px;
+      font-size: 14px;
+    }
+
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .try-again {
+      margin-top: 16px;
+    }
+
+    .footer {
+      margin: 22px 12px 0;
+      color: #777c84;
+      font-size: 11px;
+      text-align: center;
+      line-height: 1.55;
+    }
+
+    .toast {
+      position: sticky;
+      bottom: 14px;
+      width: min(100%, 520px);
+      margin: 14px auto 0;
+      padding: 13px 15px;
+      border-radius: 14px;
+      border: 1px solid #4b4f56;
+      background: #2a2c31;
+      color: #f0f1f3;
+      box-shadow: 0 14px 36px rgba(0,0,0,.38);
+      font-size: 13px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 430px) {
+      .page { padding-left: 12px; padding-right: 12px; }
+      .review-panel, .sales-card { border-radius: 19px; padding-left: 14px; padding-right: 14px; }
+      .stars { gap: 2px; }
+      .star { width: 48px; height: 48px; font-size: 39px; }
+      .benefits { grid-template-columns: 1fr; }
+      .products { gap: 8px; }
+      .product { padding: 12px 10px; }
+      .product strong { font-size: 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="top-note"><span class="dot" aria-hidden="true"></span> Interactive NFC review demo</div>
+
+    <section class="review-panel" id="reviewDemo" aria-labelledby="demoTitle">
+      <div class="profile">
+        <div class="avatar" aria-hidden="true">D</div>
+        <div>
+          <h1 id="demoTitle">Demo Business</h1>
+          <p>Review experience preview</p>
+        </div>
+      </div>
+
+      <p class="prompt">Tap a star to try the customer experience</p>
+
+      <div class="stars" id="stars" role="group" aria-label="Choose a demo star rating">
+        <button class="star" type="button" data-value="1" aria-label="1 star" aria-pressed="false">☆</button>
+        <button class="star" type="button" data-value="2" aria-label="2 stars" aria-pressed="false">☆</button>
+        <button class="star" type="button" data-value="3" aria-label="3 stars" aria-pressed="false">☆</button>
+        <button class="star" type="button" data-value="4" aria-label="4 stars" aria-pressed="false">☆</button>
+        <button class="star" type="button" data-value="5" aria-label="5 stars" aria-pressed="false">☆</button>
+      </div>
+
+      <div class="rating-label" id="ratingLabel" aria-live="polite">No rating selected</div>
+
+      <label for="reviewText" style="position:absolute;left:-9999px;">Demo review text</label>
+      <textarea id="reviewText" maxlength="500" placeholder="Share details of your own experience at this place"></textarea>
+
+      <div class="actions">
+        <button class="btn btn-secondary" type="button" id="photoBtn">＋ Add photos</button>
+        <button class="btn btn-primary" type="button" id="postBtn" disabled>Post demo review</button>
+      </div>
+
+      <p class="demo-disclaimer">Demo only. Nothing entered here is sent to Google or stored anywhere.</p>
+    </section>
+
+    <section class="sales-card" aria-labelledby="offerTitle">
+      <div class="eyebrow">Tap • Review • Grow</div>
+      <h2 id="offerTitle">This is what your customers could experience.</h2>
+      <p class="lead">Your real NFC/QR card is programmed to open your business's actual Google review link, so customers can get there in seconds.</p>
+
+      <div class="benefits">
+        <div class="benefit"><span class="check">✓</span><span>Quick customer journey</span></div>
+        <div class="benefit"><span class="check">✓</span><span>NFC + QR access</span></div>
+        <div class="benefit"><span class="check">✓</span><span>No monthly fee</span></div>
+        <div class="benefit"><span class="check">✓</span><span>Ready for your counter</span></div>
+      </div>
+
+      <div class="products" id="products" role="group" aria-label="Choose a demo product">
+        <button class="product selected" type="button" data-product="Large Card" data-price="AED 100" aria-pressed="true">
+          <div class="mini-card">TAP TO<br>REVIEW US</div>
+          <span class="name">Large Counter Card<br><small>Approx. 10 × 10 cm</small></span>
+          <strong>AED 100</strong>
+        </button>
+
+        <button class="product" type="button" data-product="Small Card" data-price="AED 70" aria-pressed="false">
+          <div class="mini-card">TAP TO<br>REVIEW US</div>
+          <span class="name">Small Card<br><small>Credit-card size</small></span>
+          <strong>AED 70</strong>
+        </button>
+      </div>
+
+      <div class="selection" id="selection" aria-live="polite">Selected: Large Counter Card — AED 100</div>
+
+      <p class="payment"><strong style="color:#e9ecef;">One-time payment.</strong> No subscription or monthly fee.</p>
+
+      <div class="how" aria-label="How the product works">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>
+            <h3>Customer taps or scans</h3>
+            <p>The card sits at the reception, counter or checkout.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>
+            <h3>Your real Google review page opens</h3>
+            <p>Each sold card is set up for the customer's actual business review link.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>
+            <h3>Customer leaves their own genuine review</h3>
+            <p>The card makes the route easier; the customer decides whether and what to review.</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary try-again" type="button" id="tryBtn">Try the review demo</button>
+    </section>
+
+    <p class="footer">Independent product demo. This page is not affiliated with or endorsed by Google.</p>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </main>
+
+  <script>
+    (function () {
+      var rating = 0;
+      var stars = Array.prototype.slice.call(document.querySelectorAll('.star'));
+      var ratingLabel = document.getElementById('ratingLabel');
+      var postBtn = document.getElementById('postBtn');
+      var photoBtn = document.getElementById('photoBtn');
+      var reviewText = document.getElementById('reviewText');
+      var toast = document.getElementById('toast');
+      var tryBtn = document.getElementById('tryBtn');
+      var products = Array.prototype.slice.call(document.querySelectorAll('.product'));
+      var selection = document.getElementById('selection');
+      var toastTimer;
+
+      function showToast(message) {
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add('show');
+        toastTimer = setTimeout(function () {
+          toast.classList.remove('show');
+        }, 3200);
+      }
+
+      function renderStars() {
+        stars.forEach(function (button, index) {
+          var active = index < rating;
+          button.textContent = active ? '★' : '☆';
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(index + 1 === rating));
+        });
+
+        if (rating === 0) {
+          ratingLabel.textContent = 'No rating selected';
+          postBtn.disabled = true;
+        } else {
+          ratingLabel.textContent = rating + (rating === 1 ? ' star selected' : ' stars selected');
+          postBtn.disabled = false;
+        }
+      }
+
+      stars.forEach(function (button) {
+        button.addEventListener('click', function () {
+          rating = Number(button.getAttribute('data-value'));
+          renderStars();
+        });
+      });
+
+      photoBtn.addEventListener('click', function () {
+        showToast('Photo upload is disabled in this demo. On Google, customers can add photos normally.');
+      });
+
+      postBtn.addEventListener('click', function () {
+        if (!rating) return;
+        var hasText = reviewText.value.trim().length > 0;
+        showToast(hasText
+          ? 'Demo complete — this would be the customer review step. Nothing was submitted.'
+          : 'Demo complete — rating selected. Nothing was submitted.');
+      });
+
+      products.forEach(function (button) {
+        button.addEventListener('click', function () {
+          products.forEach(function (item) {
+            item.classList.remove('selected');
+            item.setAttribute('aria-pressed', 'false');
+          });
+          button.classList.add('selected');
+          button.setAttribute('aria-pressed', 'true');
+          selection.textContent = 'Selected: ' + button.getAttribute('data-product') + ' — ' + button.getAttribute('data-price');
+        });
+      });
+
+      tryBtn.addEventListener('click', function () {
+        document.getElementById('reviewDemo').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(function () {
+          stars[4].focus();
+        }, 450);
+      });
+
+      renderStars();
+    })();
+  </script>
+</body>
+</html>
